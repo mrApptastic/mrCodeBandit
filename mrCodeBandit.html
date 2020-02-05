@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<title>mrCodeBandit</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<style>
+	#writeBandit {
+		position: fixed;
+		right: 0;
+		top: 0;
+		height: 100%;
+		z-index: 9999;
+		margin: 0;
+		padding: 0.5em;
+	}
+
+	#htmlBandit, #cssBandit {
+		min-height: 10vh;
+	}
+	</style>
+	<style id="styleBandit"></style>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+	<div id="contentBandit"></div>
+	<div id="writeBandit" class="jumbotron">
+		<h1>mrCodeBandit</h1>
+		<button id="newButton" class="btn btn-success">New</button>
+		<button id="delButton" class="btn btn-danger">Delete</button>
+		<button id="importButton" class="btn btn-info">Import</button>
+		<button id="delButton" class="btn btn-warning">Export</button>
+		<input id="fileBandit" class="d-block d-xl-none" type="file" />
+		<input id="resizeBandit" type="range" class="form-control" step="1" min="5" max="100" placeholder="Width" />
+		<textarea id="htmlBandit" class="form-control" placeholder="Html Code"></textarea>
+		<textarea id="cssBandit" class="form-control" placeholder="Css Code"></textarea>
+	</div>
+	<script>
+	const contentBandit = document.getElementById("contentBandit");
+	const writeBandit = document.getElementById("writeBandit");
+	const styleBandit = document.getElementById("styleBandit");
+	const resizeBandit = document.getElementById("resizeBandit");
+	const htmlBandit = document.getElementById("htmlBandit");
+	const cssBandit = document.getElementById("cssBandit");
+
+	htmlBandit.onkeydown = function(e) {
+		updateHtml(e.target.value);
+	};
+	
+	cssBandit.onkeydown = function(e) {
+		updateCss(e.target.value);
+	};
+	
+	resizeBandit.onchange = function(e) {
+		resize(e.target.value);
+	};
+	
+	function resize(value) {
+		writeBandit.style.width = value + "vw"; 
+	}
+
+	function updateHtml(content) {
+		contentBandit.innerHTML = content;
+	}
+	
+	function updateCss (content) {
+		styleBandit.innerHTML = content;
+	}
+	
+	</script>
+</body>
+</html>
