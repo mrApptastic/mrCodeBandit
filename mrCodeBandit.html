@@ -20,6 +20,13 @@
 	#htmlBandit, #cssBandit {
 		min-height: 10vh;
 	}
+	
+	.toggleBandit {
+		position: fixed;
+		top: 0;
+		left: 0;
+		z-index: 10000;
+	}
 	</style>
 	<style id="styleBandit"></style>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -28,49 +35,74 @@
 </head>
 <body>
 	<div id="contentBandit"></div>
+	<div id="toggleBandit">
+	<input id="checkBandit" type="checkbox" />
+		<label class="text-muted">Hide mrCodeBandit</label>		
+	</div>
 	<div id="writeBandit" class="jumbotron">
 		<h1>mrCodeBandit</h1>
 		<button id="newButton" class="btn btn-success">New</button>
 		<button id="delButton" class="btn btn-danger">Delete</button>
-		<button id="importButton" class="btn btn-info">Import</button>
-		<button id="delButton" class="btn btn-warning">Export</button>
+		<button id="importButton" class="btn btn-warning">Import JSON</button>
+		<button id="delButton" class="btn btn-info">Export JSON</button>
+		<button id="delButton" class="btn btn-primary">Export HTML</button>
 		<input id="fileBandit" class="d-block d-xl-none" type="file" />
-		<input id="resizeBandit" type="range" class="form-control" step="1" min="5" max="100" placeholder="Width" />
+		<input id="resizeBandit" type="range" class="form-control" step="1" min="0" max="95" placeholder="Width" />
 		<textarea id="htmlBandit" class="form-control" placeholder="Html Code"></textarea>
 		<textarea id="cssBandit" class="form-control" placeholder="Css Code"></textarea>
 	</div>
 	<script>
-	const contentBandit = document.getElementById("contentBandit");
-	const writeBandit = document.getElementById("writeBandit");
-	const styleBandit = document.getElementById("styleBandit");
-	const resizeBandit = document.getElementById("resizeBandit");
-	const htmlBandit = document.getElementById("htmlBandit");
-	const cssBandit = document.getElementById("cssBandit");
+	const 	contentBandit = document.getElementById("contentBandit"),
+			writeBandit = document.getElementById("writeBandit"),
+			toggleBandit = document.getElementById("toggleBandit");
+			checkBandit = document.getElementById("checkBandit");
+			styleBandit = document.getElementById("styleBandit"),
+			resizeBandit = document.getElementById("resizeBandit"),
+			htmlBandit = document.getElementById("htmlBandit"),
+			cssBandit = document.getElementById("cssBandit");
+	let		projects = localStorage["mrCodeBanditProjects"],
+			baseModel = {
+				"Name" : "",
+				"Html" : "",
+				"Css" : "",
+				"Js" : ""
+			};
+	
+	checkBandit.onchange = function (e) { toggleHide(e.target.checked); };
+	htmlBandit.onkeydown = function(e) { updateHtml(e.target.value); };
+	htmlBandit.onblur = function(e) { updateHtml(e.target.value); };
+	cssBandit.onkeydown = function(e) { updateCss(e.target.value); };
+	cssBandit.onblur = function(e) { updateCss(e.target.value); };	
+	resizeBandit.onchange = function(e) { resize(e.target.value ); };
+	
+	function toggleHide(value) { writeBandit.style.display = value ? "none" : "block"; }	
+	function resize(value) { writeBandit.style.width = (100 - value) + "vw"; }
+	function updateHtml(content) { contentBandit.innerHTML = content; }
+	function updateCss (content) { styleBandit.innerHTML = content; }
 
-	htmlBandit.onkeydown = function(e) {
-		updateHtml(e.target.value);
-	};
-	
-	cssBandit.onkeydown = function(e) {
-		updateCss(e.target.value);
-	};
-	
-	resizeBandit.onchange = function(e) {
-		resize(e.target.value);
-	};
-	
-	function resize(value) {
-		writeBandit.style.width = value + "vw"; 
+	function getProject (idx) {		
+		if (localStorage) {
+			if (projects) {
+				const projList = JSON.parse(projects);
+				const index = !isNaN(idx) ? (idx <= projects.length - 1 ? idx : 0) : 0;
+				htmlBandit.value = projList[index].Html;
+				cssBandit.value = projList[index].Css;
+			}
+			else {
+				const projList = new Array();
+				projList.push(JSON.stringify(JSON.parse(baseModel)));
+				console.log(projList);
+				
+				//projects = projList;
+			}			
+		}
+		//console.log(JSON.parse(projects));
 	}
-
-	function updateHtml(content) {
-		contentBandit.innerHTML = content;
+	function init() { 
+		resize(resizeBandit.value);
+		getProject();
 	}
-	
-	function updateCss (content) {
-		styleBandit.innerHTML = content;
-	}
-	
+	init();
 	</script>
 </body>
 </html>
