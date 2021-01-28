@@ -21,10 +21,10 @@
 		min-height: 10vh;
 	}
 	
-	.toggleBandit {
+	#toggleBandit {
 		position: fixed;
-		top: 0;
-		left: 0;
+		bottom: 0;
+		right: 0;
 		z-index: 10000;
 	}
 	</style>
@@ -60,38 +60,40 @@
 			resizeBandit = document.getElementById("resizeBandit"),
 			htmlBandit = document.getElementById("htmlBandit"),
 			cssBandit = document.getElementById("cssBandit");
-	let		projects = localStorage["mrCodeBanditProjects"],
+	let		projects = new Array();
 			baseModel = {
 				"Name" : "",
 				"Html" : "",
 				"Css" : "",
 				"Js" : ""
-			};
+			},
+			index = 0;
 	
 	checkBandit.onchange = function (e) { toggleHide(e.target.checked); };
-	htmlBandit.onkeydown = function(e) { updateHtml(e.target.value); };
+	htmlBandit.onkeyup = function(e) { updateHtml(e.target.value); };
 	htmlBandit.onblur = function(e) { updateHtml(e.target.value); };
-	cssBandit.onkeydown = function(e) { updateCss(e.target.value); };
+	cssBandit.onkeyup = function(e) { updateCss(e.target.value); };
 	cssBandit.onblur = function(e) { updateCss(e.target.value); };	
 	resizeBandit.onchange = function(e) { resize(e.target.value ); };
 	
 	function toggleHide(value) { writeBandit.style.display = value ? "none" : "block"; }	
 	function resize(value) { writeBandit.style.width = (100 - value) + "vw"; }
-	function updateHtml(content) { contentBandit.innerHTML = content; }
-	function updateCss (content) { styleBandit.innerHTML = content; }
+	function updateHtml(content) { contentBandit.innerHTML = content; save(); }
+	function updateCss (content) { styleBandit.innerHTML = content; save(); }
+	function save() { projects[index].Html = contentBandit.innerHTML; projects[index].Css = styleBandit.innerHTML; localStorage.setItem("mrCodeBanditProjects", JSON.stringify(projects)); console.log("saved!")}
 
 	function getProject (idx) {		
 		if (localStorage) {
-			if (projects) {
-				const projList = JSON.parse(projects);
-				const index = !isNaN(idx) ? (idx <= projects.length - 1 ? idx : 0) : 0;
-				htmlBandit.value = projList[index].Html;
-				cssBandit.value = projList[index].Css;
+			if (localStorage.getItem("mrCodeBanditProjects")) {
+				projects = JSON.parse(localStorage.getItem("mrCodeBanditProjects"));
+				index = !isNaN(idx) ? (idx <= projects.length - 1 ? idx : 0) : 0;
+				htmlBandit.value = projects[index].Html;
+				cssBandit.value = projects[index].Css;
+				updateHtml(htmlBandit.value);
+				updateCss(cssBandit.value);
 			}
 			else {
-				const projList = new Array();
-				projList.push(JSON.stringify(JSON.parse(baseModel)));
-				console.log(projList);
+				projects.push(JSON.parse(JSON.stringify(baseModel)));
 				
 				//projects = projList;
 			}			
