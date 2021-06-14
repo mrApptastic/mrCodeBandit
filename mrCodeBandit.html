@@ -44,10 +44,10 @@
 		<button id="newButton" class="btn btn-success">New</button>
 		<button id="delButton" class="btn btn-danger">Delete</button>
 		<button id="importButton" class="btn btn-warning">Import JSON</button>
-		<button id="delButton" class="btn btn-info">Export JSON</button>
-		<button id="delButton" class="btn btn-primary">Export HTML</button>
+		<button id="jsonButton" class="btn btn-info">Export JSON</button>
+		<button id="htmlButton" class="btn btn-primary">Export HTML</button>
 		<input id="fileBandit" class="d-block d-xl-none" type="file" />
-		<div class="row">
+		<div class="row mt-2">
 			<div class="col-md-6">
 				<input id="nameBandit" class="input-lg form-control" type="text" />
 			</div>
@@ -55,21 +55,33 @@
 				<select id="selectBandit" class="input-lg form-control"></select>				
 			</div>
 		</div>
+		<div class="row mt-2">
+			<div class="col-md-6">
+				<button id="clearButton" class="btn btn-dark">Clear Cache</button>
+			</div>
+		</div>
 		<input id="resizeBandit" type="range" class="form-control" step="1" min="0" max="95" placeholder="Width" />
 		<textarea id="htmlBandit" class="form-control" placeholder="Html Code"></textarea>
 		<textarea id="cssBandit" class="form-control" placeholder="Css Code"></textarea>
 	</div>
 	<script>
-	const 	contentBandit = document.getElementById("contentBandit"),
+	const 	cache = "mrCodeBanditProjects",
+			contentBandit = document.getElementById("contentBandit"),
 			writeBandit = document.getElementById("writeBandit"),
-			toggleBandit = document.getElementById("toggleBandit");
-			checkBandit = document.getElementById("checkBandit");
+			toggleBandit = document.getElementById("toggleBandit"),
+			checkBandit = document.getElementById("checkBandit"),
 			styleBandit = document.getElementById("styleBandit"),
 			resizeBandit = document.getElementById("resizeBandit"),
-			nameBandit = document.getElementById("nameBandit");
-			selectBandit = document.getElementById("selectBandit");
+			nameBandit = document.getElementById("nameBandit"),
+			selectBandit = document.getElementById("selectBandit"),
 			htmlBandit = document.getElementById("htmlBandit"),
-			cssBandit = document.getElementById("cssBandit");
+			cssBandit = document.getElementById("cssBandit"),
+			newButton = document.getElementById("newButton"),
+			delButton = document.getElementById("delButton"),
+			importButton = document.getElementById("importButton"),
+			jsonButton = document.getElementById("jsonButton"),
+			htmlButton = document.getElementById("htmlButton"),
+			clearButton = document.getElementById("clearButton");
 	let		projects = new Array();
 			baseModel = {
 				"Name" : "",
@@ -86,19 +98,25 @@
 	cssBandit.onblur = e => { updateCss(e.target.value); };	
 	resizeBandit.onchange = e => { resize(e.target.value ); };
 	nameBandit.onchange = e => { projects[index].Name = e.target.value; save(); };
-	selectBandit.onchange = e => { index = parseInt(selectBandit.value, 10); getProject(index); };		
+	selectBandit.onchange = e => { index = parseInt(selectBandit.value, 10); getProject(index); };
+	newButton.onclick = e => { addProject(); };
+	importButton.onclick = e => { console.log(e) };
+	delButton.onclick = e => { console.log(e) };
+	jsonButton.onclick = e => { console.log(e) };
+	htmlButton.onclick = e => { console.log(e) };
+	clearButton.onclick = e => { const ok = confirm("Are you sure?"); if (ok) { localStorage.removeItem(cache) } };
 	
 	toggleHide = value => { writeBandit.style.display = value ? "none" : "block"; }	
 	resize = value => { writeBandit.style.width = (100 - value) + "vw"; }
 	updateHtml = content => { contentBandit.innerHTML = content; save(); }
 	updateCss = content => { styleBandit.innerHTML = content; save(); }
-	save = () => { projects[index].Html = contentBandit.innerHTML; projects[index].Css = styleBandit.innerHTML; localStorage.setItem("mrCodeBanditProjects", JSON.stringify(projects)); console.log("saved!")}
+	save = () => { projects[index].Html = contentBandit.innerHTML; projects[index].Css = styleBandit.innerHTML; localStorage.setItem(cache, JSON.stringify(projects)); console.log("saved!")}
 
 	getProject = idx => {		
 		console.log(idx);
 		if (localStorage) {
-			if (localStorage.getItem("mrCodeBanditProjects")) {
-				projects = JSON.parse(localStorage.getItem("mrCodeBanditProjects"));
+			if (localStorage.getItem(cache)) {
+				projects = JSON.parse(localStorage.getItem(cache));
 				index = !isNaN(idx) ? (idx <= projects.length - 1 ? idx : 0) : 0;
 				htmlBandit.value = projects[index].Html;
 				cssBandit.value = projects[index].Css;
