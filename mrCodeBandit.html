@@ -98,7 +98,7 @@
 	cssBandit.onblur = e => { updateCss(e.target.value); };	
 	resizeBandit.onchange = e => { resize(e.target.value ); };
 	nameBandit.onchange = e => { projects[index].Name = e.target.value; save(); };
-	selectBandit.onchange = e => { index = parseInt(selectBandit.value, 10); getProject(index); };
+	selectBandit.onchange = e => { console.log(e); index = parseInt(e.target.value, 10); getProject(index); };
 	newButton.onclick = e => { addProject(); };
 	importButton.onclick = e => { console.log(e) };
 	delButton.onclick = e => { console.log(e) };
@@ -113,11 +113,11 @@
 	save = () => { projects[index].Html = contentBandit.innerHTML; projects[index].Css = styleBandit.innerHTML; localStorage.setItem(cache, JSON.stringify(projects)); console.log("saved!")}
 
 	getProject = idx => {		
-		console.log(idx);
 		if (localStorage) {
 			if (localStorage.getItem(cache)) {
 				projects = JSON.parse(localStorage.getItem(cache));
 				index = !isNaN(idx) ? (idx <= projects.length - 1 ? idx : 0) : 0;
+				console.log(index);
 				htmlBandit.value = projects[index].Html;
 				cssBandit.value = projects[index].Css;
 				updateHtml(htmlBandit.value);
@@ -125,23 +125,23 @@
 			}
 			else {
 				projects.push(JSON.parse(JSON.stringify(baseModel)));
-				
-				//projects = projList;
 			}			
 		}
-		//console.log(JSON.parse(projects));
-	}
+	};
 	addProject = () => {
 		projects.push(JSON.parse(JSON.stringify(baseModel)));
 		index = projects.length -1;
-	}
+		save();
+		init();
+	};
 	init = () => { 
 		resize(resizeBandit.value);
-		getProject(0);
+		getProject(index);
+		selectBandit.innerHTML = "";
 		for (let i = 0; i < projects.length; i++) {
 			selectBandit.innerHTML += "<option \"value\"=\"" + i +"\">" + projects[i].Name +"</option"
 		}
-	}
+	};
 	init();
 	</script>
 </body>
